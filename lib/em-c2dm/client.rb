@@ -10,7 +10,9 @@ module EventMachine
         @http = EventMachine::HttpRequest.new(URL).post(
           :query  => @notification.params,
           :head   => {
-            "Authorization" => "GoogleLogin auth=#{EM::C2DM.token}",
+            "Authorization"   => "GoogleLogin auth=#{EM::C2DM.token}",
+            "Content-Length"  => 0,
+            "User-Agent"      => "em-c2dm #{EM::C2DM::VERSION}"
           }
         )
         @http.callback  { on_complete }
