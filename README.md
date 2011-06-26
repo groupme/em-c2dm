@@ -19,7 +19,7 @@ Be sure to set your token if the store does not already have it.
     
 ### Collapse Key
 
-You can also provide a `collapse_key`. See [Google's Documention](http://google.com) to learn more.
+You can also provide a `collapse_key`. See [Google's Documention](http://code.google.com/android/c2dm/index.html) to learn more.
 
     EM.run do
       EM::C2DM.push(registration_id,
