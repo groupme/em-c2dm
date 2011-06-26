@@ -48,8 +48,4 @@ To supply an existing EM::Redis connection:
         
 ## TODO
 
-* Add support for auth_token storage (file system and redis probably)
-
-## Credits
-
-This is a direct clone of Dave Yeu's [em-apn](https://github.com/groupme/em-apn) gem.
+* Pass a block to C2DM.push to handle response
