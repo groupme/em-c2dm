@@ -1,7 +1,7 @@
 module EventMachine
   module C2DM
     class Notification
-      attr_reader :uuid
+      attr_reader :uuid, :options
 
       def initialize(registration_id, options = {})
         @registration_id, @options = registration_id, options
