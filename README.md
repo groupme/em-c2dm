@@ -45,6 +45,15 @@ To supply an existing EM::Protocols::Redis connection:
 
     connection = EM::Protocols::Redis.connect(...)
     EM::C2DM.store = EM::C2DM::RedisStore.new(connection)
+    
+### Token Caching
+
+If you're only running a single process, you can cache the token in memory
+without having to worry about some other process setting a new token.
+
+    EM::C2DM.cache_token = true
+    
+This is `false` by default.
         
 ## TODO
 

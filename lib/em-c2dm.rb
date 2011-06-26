@@ -19,20 +19,30 @@ module EventMachine
       def store
         @store
       end
-      
+
       def store=(store)
         @store = store
       end
-      
+
       def token=(token)
         store.set(token)
         @token = token
       end
-      
+
       def token
-        @token ||= store.get
+        if @cache_token
+          @token ||= store.get
+        else
+          store.get
+        end
       end
-      
+
+      # When running a single process, you can memoize the token without
+      # worrying about some other process setting it
+      def cache_token=(bool)
+        @cache_token = bool
+      end
+
       def logger
         @logger ||= Logger.new(STDOUT)
       end
