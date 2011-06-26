@@ -16,18 +16,6 @@ Be sure to set your token if the store does not already have it.
     EM.run do
       EM::C2DM.push(registration_id, :alert => "Hello!")
     end
-
-### Custom Response Handling
-
-    EM.run do
-      EM::C2DM.push(registration_id, :alert => "Hello!") do |http|
-        if http.response_header.status == 200
-          puts "Success!"
-        else
-          puts "Failure"
-        end
-      end
-    end
     
 ### Collapse Key
 
