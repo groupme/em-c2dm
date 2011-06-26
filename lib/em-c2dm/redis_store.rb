@@ -4,7 +4,11 @@ module EventMachine
       KEY = "em-c2dm:auth_token"
 
       def initialize(redis)
-        @redis = redis.is_a?(String) ? connect(redis) : redis
+        @redis = if redis.is_a?(String) || redis.nil?
+          connect(redis)
+        else
+          redis
+        end
       end
 
       def set(token)
