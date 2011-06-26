@@ -3,7 +3,7 @@ module EventMachine
     class RedisStore
       KEY = "em-c2dm:auth_token"
       
-      def inititalize(redis)
+      def initialize(redis)
         @redis = redis.is_a?(String) ? connect(redis) : redis
       end
       
