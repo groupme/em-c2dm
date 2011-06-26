@@ -48,4 +48,5 @@ To supply an existing EM::Protocols::Redis connection:
         
 ## TODO
 
-* Pass a block to C2DM.push to handle response
+* Pass a block to `C2DM.push` to handle response
+* Add a filesystem token store
