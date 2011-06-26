@@ -27,13 +27,12 @@ module EventMachine
 
       def connect(url = nil)
         url = URI(url || "redis://127.0.0.1:6379/0")
-        args = {}
-        args[:host]     ||= url.host
-        args[:port]     ||= url.port
-        args[:password] ||= url.password
-        args[:db]       ||= url.path[1..-1].to_i
-
-        EM::Protocols::Redis.connect(args)
+        EM::Protocols::Redis.connect(
+          :host     => url.host,
+          :port     => url.port,
+          :password => url.password,
+          :db       => url.path[1..-1].to_i
+        )
       end
     end
   end
