@@ -7,7 +7,7 @@ module EventMachine
         @start = Time.now.to_f
         @notification = notification
         raise "auth token not set" unless EM::C2DM.token
-        @http = EventMachine::HttpRequest.new(URL).get(
+        @http = EventMachine::HttpRequest.new(URL).post(
           :query  => @notification.params,
           :head   => {
             "Authorization" => "GoogleLogin auth=#{EM::C2DM.token}",
