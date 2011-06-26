@@ -65,6 +65,7 @@ module EventMachine
       def update_token
         new_token = @http.response_header["Update-Client-Auth"]
         return if new_token.nil? || new_token.empty?
+        EM::C2DM.logger.info("received Update-Client-Auth. Setting new token.")
         EM::C2DM.token = new_token
       end
     end
