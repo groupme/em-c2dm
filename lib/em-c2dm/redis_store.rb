@@ -27,6 +27,7 @@ module EventMachine
 
       def connect(url = nil)
         url = URI(url || "redis://127.0.0.1:6379/0")
+        args = {}
         args[:host]     ||= url.host
         args[:port]     ||= url.port
         args[:password] ||= url.password
