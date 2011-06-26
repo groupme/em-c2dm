@@ -30,7 +30,7 @@ module EventMachine
       end
 
       def on_success
-        EM::C2DM.logger.info("#{uuid} success (#{elapsed}ms)")
+        EM::C2DM.logger.info("#{notification.uuid} success (#{elapsed}ms)")
       end
 
       def on_failure(code)
@@ -52,7 +52,7 @@ module EventMachine
       end
 
       def log_error(message)
-        EM::C2DM.logger.error("#{uuid} failure (#{elapsed}ms): #{message}")
+        EM::C2DM.logger.error("#{notification.uuid} failure (#{elapsed}ms): #{message}")
       end
 
       def elapsed
