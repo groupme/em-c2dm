@@ -1,7 +1,7 @@
 module EventMachine
   module C2DM
     class RedisStore
-      KEY = "em-c2dm:auth_token"
+      KEY = "em-c2dm:token"
 
       def initialize(redis)
         @redis = if redis.is_a?(String) || redis.nil?
