@@ -3,7 +3,7 @@ module EventMachine
     class Notification
       attr_reader :uuid, :options
 
-      def initialize(registration_id, options = {})
+      def initialize(registration_id, options)
         @registration_id, @options = registration_id, options
         @uuid = $uuid.generate
       end

@@ -11,7 +11,7 @@ $uuid = UUID.new
 module EventMachine
   module C2DM
     class << self
-      def push(registation_id, options = {})
+      def push(registation_id, options)
         notification = EM::C2DM::Notification.new(registation_id, options)
         @client ||= Client.new
         @client.deliver(notification)
