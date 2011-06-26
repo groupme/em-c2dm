@@ -41,7 +41,7 @@ To connect to a non-default redis server:
 
     EM::C2DM.store = EM::C2DM::RedisStore.new("YOUR_REDIS_URL")
     
-To supply an existing EM::Redis connection:
+To supply an existing EM::Protocols::Redis connection:
 
     connection = EM::Protocols::Redis.connect(...)
     EM::C2DM.store = EM::C2DM::RedisStore.new(connection)
