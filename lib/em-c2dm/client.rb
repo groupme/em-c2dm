@@ -4,10 +4,11 @@ module EventMachine
       URL = "https://android.apis.google.com/c2dm/send"
 
       def deliver(notification)
-        start = Time.now.to_f
+        @start = Time.now.to_f
+        @notification = notification
         raise "auth token not set" unless EM::C2DM.token
         @http = EventMachine::HttpRequest.new(URL).get(
-          :query  => notification.params,
+          :query  => @notification.params,
           :head   => {
             "Authorization" => "GoogleLogin auth=#{EM::C2DM.token}",
           }
@@ -30,7 +31,7 @@ module EventMachine
       end
 
       def on_success
-        EM::C2DM.logger.info("#{notification.uuid} success (#{elapsed}ms)")
+        EM::C2DM.logger.info("#{@notification.uuid} success (#{elapsed}ms)")
       end
 
       def on_failure(code)
@@ -43,7 +44,7 @@ module EventMachine
 
           unless retry_after.nil? || retry_after.empty?
             EventMachine::Timer.new(retry_after.to_i) do
-              deliver(notification)
+              deliver(@notification)
             end
           end
         else
@@ -52,11 +53,11 @@ module EventMachine
       end
 
       def log_error(message)
-        EM::C2DM.logger.error("#{notification.uuid} failure (#{elapsed}ms): #{message}")
+        EM::C2DM.logger.error("#{@notification.uuid} failure (#{elapsed}ms): #{message}")
       end
 
       def elapsed
-        ((Time.now.to_f - start) * 1000.0).round # in milliseconds
+        ((Time.now.to_f - @start) * 1000.0).round # in milliseconds
       end
 
       def update_token
