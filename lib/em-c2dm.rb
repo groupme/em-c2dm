@@ -13,9 +13,28 @@ module EventMachine
   module C2DM
     class << self
       def push(registation_id, options)
-        notification = EM::C2DM::Notification.new(registation_id, options)
+        notification = Notification.new(registation_id, options)
         @client ||= Client.new
         @client.deliver(notification)
+      end
+
+      def setup_token(options = {})
+        cache_token = options[:cache] if options[:cache]
+
+        EM.run do
+          @store = RedisStore.new(options[:redis])
+          if options[:token]
+            @store.set(options[:token], :stop)
+          else
+            @store.get(:stop)
+          end
+        end
+
+        if token
+          puts "Using token: #{token}"
+        else
+          raise "Token not found! Call setup_token with :token => YOUR_TOKEN"
+        end
       end
 
       def store
@@ -31,11 +50,9 @@ module EventMachine
       end
 
       def token
-        if @cache_token
-          @token ||= store.get
-        else
-          store.get
-        end
+        return @token if @cache_token && @token
+        store.get
+        @token
       end
 
       # When running a single process, you can memoize the token without
