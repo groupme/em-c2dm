@@ -21,9 +21,11 @@ module EventMachine
             token = $1
 
             if token.nil? || token.empty?
-              raise "error: blank token! #{http.response}"
+              puts "error!"
+              raise http.response.inspect
             else
-              puts "ok."
+              EM::C2DM.token = token
+              puts "success"
             end
             EM.stop
           end
