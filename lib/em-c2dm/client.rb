@@ -64,7 +64,7 @@ module EventMachine
       end
 
       def log(message)
-        "#{message} guid=#{@notification.guid} time=#{elapsed}"
+        "#{message} uuid=#{@notification.uuid} time=#{elapsed}"
       end
     end
   end
