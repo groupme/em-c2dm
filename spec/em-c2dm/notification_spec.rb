@@ -12,31 +12,43 @@ describe EM::C2DM::Notification do
       }.should raise_error
     end
 
-    it "includes registration_id" do
-      notification = EM::C2DM::Notification.new("ABC", :alert => "hi")
+    it "includes registration_id and collapse_key" do
+      notification = EM::C2DM::Notification.new("ABC",
+        :collapse_key => "foo",
+        :alert        => "bar"
+      )
       notification.params.should == {
         "registration_id" => "ABC",
-        "data.alert" => "hi"
+        "collapse_key"    => "foo",
+        "data.alert"      => "bar"
       }
     end
 
-    it "adds collapse_key if given" do
-      notification = EM::C2DM::Notification.new("ABC", :collapse_key => "foo")
+    it "accepts string parameters" do
+      notification = EM::C2DM::Notification.new("ABC",
+        "collapse_key" => "foo",
+        "alert"        => "bar"
+      )
       notification.params.should == {
         "registration_id" => "ABC",
-        "collapse_key" => "foo"
+        "collapse_key"    => "foo",
+        "data.alert"      => "bar"
       }
     end
 
     it "prefixes all other params with 'data.'" do
       notification = EM::C2DM::Notification.new("ABC",
-        :foo => "bar",
-        :biz => "baz"
+        :collapse_key => "foo",
+        :alert        => "bar",
+        :biz          => "baz",
+        :fizz         => "buzz"
       )
       notification.params.should == {
         "registration_id" => "ABC",
-        "data.foo" => "bar",
-        "data.biz" => "baz"
+        "collapse_key"    => "foo",
+        "data.alert"      => "bar",
+        "data.biz"        => "baz",
+        "data.fizz"       => "buzz"
       }
     end
   end

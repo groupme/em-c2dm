@@ -11,7 +11,10 @@ See [Google's Documention](http://code.google.com/android/c2dm/index.html) to le
     EM::C2DM.authenticate(username, password)
         
     EM.run do
-      EM::C2DM.push(registration_id, :alert => "Hello!")
+      EM::C2DM.push(registration_id,
+        :alert        => "Hello!",
+        :collapse_key => "required"
+      )
     end
     
 ## Custom Params
@@ -19,21 +22,13 @@ See [Google's Documention](http://code.google.com/android/c2dm/index.html) to le
 You can add custom params (which will be converted to `data.<KEY>`):
   
     EM::C2DM.push(registration_id,
-      :alert    => "Hello!",
-      :custom   => "data",
-      :awesome  => true
-    )
-    
-    
-## Collapse Key
-
-You can also provide a `collapse_key`:
-
-    EM::C2DM.push(registration_id,
       :alert        => "Hello!",
-      :collapse_key => "SOME_COLLAPSE_KEY"
+      :collapse_key => "required",
+      :custom       => "data",
+      :awesome      => true
     )
-        
+            
 ## TODO
 
 * Pass a block to `C2DM.push` to handle response
+* Add throttling support
