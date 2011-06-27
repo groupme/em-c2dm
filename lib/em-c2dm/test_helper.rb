@@ -23,11 +23,17 @@ module EventMachine
       @deliveries ||= []
     end
 
+    Auth.class_eval do
+      def self.authenticate(username, password)
+        EM::C2DM.token = "TEST_TOKEN"
+      end
+    end
+
     Client.class_eval do
       def deliver(notification)
         # noop
       end
-      
+
       unless instance_methods.include?(:deliver_with_testing)
         def deliver_with_testing(notification)
           EM::C2DM.deliveries << notification
@@ -35,7 +41,7 @@ module EventMachine
         end
         alias :deliver_without_testing :deliver
         alias :deliver :deliver_with_testing
-      end      
+      end
     end
   end
 end
