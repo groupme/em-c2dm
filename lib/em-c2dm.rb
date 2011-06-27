@@ -18,6 +18,10 @@ module EventMachine
         @client.deliver(notification)
       end
 
+      def authenticate(username, password)
+        Auth.authenticate(username, password)
+      end
+
       def setup_token(options = {})
         cache_token = options[:cache] if options[:cache]
 
