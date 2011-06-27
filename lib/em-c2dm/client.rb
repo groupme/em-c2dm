@@ -16,7 +16,7 @@ module EventMachine
           }
         )
         @http.callback  { on_complete }
-        @http.errback   { |error| rror(error.inspect) }
+        @http.errback   { |e| error(e.inspect) }
       end
 
       private
