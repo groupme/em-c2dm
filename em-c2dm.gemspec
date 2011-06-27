@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "eventmachine", ">= 1.0.0.beta.3"
   s.add_dependency "em-http-request", ">= 1.0.0.beta.4"
-  s.add_dependency "em-redis", ">= 0.3.0"
   s.add_dependency "uuid"
 
   s.add_development_dependency "rspec", "~> 2.6.0"

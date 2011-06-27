@@ -2,60 +2,38 @@
 
 Send push notifications to Android devices.
 
+See [Google's Documention](http://code.google.com/android/c2dm/index.html) to learn more.
+
 ## Usage
-
-You need to setup a __token store__ to persist your auth token.
-
-Be sure to set your token if the store does not already have it.
 
     require "em-c2dm"
 
-    EM::C2DM.store = EM::C2DM::RedisStore.new
-    EM::C2DM.token ||= "INITIAL_TOKEN"
+    EM::C2DM.authenticate(username, password)
         
     EM.run do
       EM::C2DM.push(registration_id, :alert => "Hello!")
     end
     
-### Collapse Key
+## Custom Params
 
-You can also provide a `collapse_key`. See [Google's Documention](http://code.google.com/android/c2dm/index.html) to learn more.
-
-    EM.run do
-      EM::C2DM.push(registration_id,
-        :alert        => "Hello!",
-        :collapse_key => "SOME_COLLAPSE_KEY"
-      )
-    end
-
-## Token Store
-
-Google loves to constantly invalidate your `auth_token`.
-
-This means you have to store the updated auth token somewhere other than 
-in memory.
-
-### RedisStore
-
-To connect to a non-default redis server:
-
-    EM::C2DM.store = EM::C2DM::RedisStore.new("YOUR_REDIS_URL")
+You can add custom params (which will be converted to `data.<KEY>`):
+  
+    EM::C2DM.push(registration_id,
+      :alert    => "Hello!",
+      :custom   => "data",
+      :awesome  => true
+    )
     
-To supply an existing EM::Protocols::Redis connection:
-
-    connection = EM::Protocols::Redis.connect(...)
-    EM::C2DM.store = EM::C2DM::RedisStore.new(connection)
     
-### Token Caching
+## Collapse Key
 
-If you're only running a single process, you can cache the token in memory
-without having to worry about some other process setting a new token.
+You can also provide a `collapse_key`:
 
-    EM::C2DM.cache_token = true
-    
-This is `false` by default.
+    EM::C2DM.push(registration_id,
+      :alert        => "Hello!",
+      :collapse_key => "SOME_COLLAPSE_KEY"
+    )
         
 ## TODO
 
 * Pass a block to `C2DM.push` to handle response
-* Add a filesystem token store
