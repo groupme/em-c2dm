@@ -28,7 +28,6 @@ module EventMachine
 
       def token=(token)
         @token = token
-        store.set(token)
       end
 
       def token

@@ -13,13 +13,14 @@ module EventMachine
 
       def set(token)
         @redis.set(KEY, token) do |token|
+          EM::C2DM.token = token
           EM::C2DM.logger.info("set token to #{token}: #{response}")
         end
       end
 
       def get
         @redis.get(KEY) do |response|
-          response
+          EM::C2DM.token = response
         end
       end
 
