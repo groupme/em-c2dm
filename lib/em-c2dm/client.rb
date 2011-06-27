@@ -47,8 +47,7 @@ module EventMachine
             end
           end
         else
-          error(message = "unexpected response code #{code} - #{@http.response.inspect}")
-          raise message
+          error("unexpected response code #{code} - #{@http.response.inspect}")
         end
       end
 
