@@ -4,6 +4,7 @@ module EventMachine
       attr_reader :uuid, :options
 
       def initialize(registration_id, options = {})
+        puts options.inspect
         @registration_id, @options = registration_id, options
         raise ArgumentError.new("missing options") if options.nil? || options.empty?
         @uuid = $uuid.generate
