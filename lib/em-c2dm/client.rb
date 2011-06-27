@@ -7,6 +7,7 @@ module EventMachine
         @start = Time.now.to_f
         @notification = notification
         raise "auth token not set" unless EM::C2DM.token
+        EM::C2DM.logger.info("#{@notification.uuid} params:#{@notification.params} #{EM::C2DM.token}")
         @http = EventMachine::HttpRequest.new(URL).post(
           :query  => @notification.params,
           :head   => {
@@ -28,6 +29,7 @@ module EventMachine
         if code == 200
           on_success
         else
+          EM::C2DM.logger.error("#{@notification.uuid} error: #{@http.response_header} #{@http.response.inspect}")
           on_failure(code)
         end
       end
