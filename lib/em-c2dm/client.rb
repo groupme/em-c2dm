@@ -7,7 +7,6 @@ module EventMachine
         @start = Time.now.to_f
         @notification = notification
         raise "auth token not set" unless EM::C2DM.token
-        EM::C2DM.logger.info("#{@notification.uuid} params:#{@notification.params} #{EM::C2DM.token}")
         @http = EventMachine::HttpRequest.new(URL).post(
           :query  => @notification.params,
           :head   => {
@@ -27,15 +26,11 @@ module EventMachine
 
         code = @http.response_header.status.to_i
         if code == 200
-          on_success
+          EM::C2DM.logger.info("#{@notification.uuid} success (#{elapsed}ms)")
         else
           EM::C2DM.logger.error("#{@notification.uuid} error: #{@http.response_header} #{@http.response.inspect}")
           on_failure(code)
         end
-      end
-
-      def on_success
-        EM::C2DM.logger.info("#{@notification.uuid} success (#{elapsed}ms)")
       end
 
       def on_failure(code)
@@ -47,12 +42,15 @@ module EventMachine
           retry_after = @http.response_header["Retry-After"]
 
           unless retry_after.nil? || retry_after.empty?
+            log_error("retrying after #{retry_after} seconds...")
             EventMachine::Timer.new(retry_after.to_i) do
               deliver(@notification)
             end
           end
         else
-          log_error("unexpected response: #{@http.response.inspect}")
+          message = "unexpected response: #{@http.response.inspect}"
+          log_error(message)
+          raise message
         end
       end
 
