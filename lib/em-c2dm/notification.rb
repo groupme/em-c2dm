@@ -5,7 +5,6 @@ module EventMachine
 
       def initialize(registration_id, options = {})
         @registration_id, @options = registration_id, options
-        puts options.inspect
         raise ArgumentError.new("missing options") if options.nil? || options.empty?
         @uuid = $uuid.generate
       end
@@ -22,7 +21,6 @@ module EventMachine
         @options.each do |k,v|
           params["data.#{k}"] = v
         end
-        puts params.inspect
         params
       end
     end
