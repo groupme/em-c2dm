@@ -20,7 +20,7 @@ module EventMachine
             http.response =~ /Auth=([a-z0-9\-_]+)$/i
             token = $1
 
-            if token.nil? || token.emtpy?
+            if token.nil? || token.empty?
               raise "error: blank token! #{http.response}"
             else
               puts "ok."
