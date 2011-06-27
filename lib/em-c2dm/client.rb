@@ -6,7 +6,7 @@ module EventMachine
       def deliver(notification)
         @start = Time.now.to_f
         @notification = notification
-        raise "auth token not set" unless EM::C2DM.token
+        raise "token not set!" unless EM::C2DM.token
         @http = EventMachine::HttpRequest.new(URL).post(
           :query  => @notification.params,
           :head   => {
@@ -16,7 +16,7 @@ module EventMachine
           }
         )
         @http.callback  { on_complete }
-        @http.errback   { |error| log_error(error.inspect) }
+        @http.errback   { |error| rror(error.inspect) }
       end
 
       private
@@ -35,19 +35,19 @@ module EventMachine
       def on_failure(code)
         case code
         when 401
-          error("error: invalid auth token")
+          error("invalid auth token")
         when 502, 503
-          error("error: service unavilable")
+          error("service unavilable")
           retry_after = @http.response_header["Retry-After"]
 
           unless retry_after.nil? || retry_after.empty?
-            error("error: retrying after #{retry_after} seconds...")
+            error("retrying after #{retry_after} seconds...")
             EventMachine::Timer.new(retry_after.to_i) do
               deliver(@notification)
             end
           end
         else
-          error(message = "error: unexpected response=#{@http.response.inspect}")
+          error(message = "unexpected response code #{code} - #{@http.response.inspect}")
           raise message
         end
       end
