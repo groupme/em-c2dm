@@ -56,7 +56,7 @@ module EventMachine
 
       def token
         return @token if @cache_token && @token
-        store.get
+        store.get if store
         @token
       end
 
