@@ -35,19 +35,19 @@ module EventMachine
       def on_failure(code)
         case code
         when 401
-          log_error("error: invalid auth token")
+          error("error: invalid auth token")
         when 502, 503
-          log_error("error: service unavilable")
+          error("error: service unavilable")
           retry_after = @http.response_header["Retry-After"]
 
           unless retry_after.nil? || retry_after.empty?
-            log_error("error: retrying after #{retry_after} seconds...")
+            error("error: retrying after #{retry_after} seconds...")
             EventMachine::Timer.new(retry_after.to_i) do
               deliver(@notification)
             end
           end
         else
-          log(message = "error: unexpected response=#{@http.response.inspect}")
+          error(message = "error: unexpected response=#{@http.response.inspect}")
           raise message
         end
       end
@@ -56,7 +56,7 @@ module EventMachine
         new_token = @http.response_header["Update-Client-Auth"]
         return if new_token.nil? || new_token.empty?
         EM::C2DM.token = new_token
-        log("update-client-auth: set new token")
+        log("received update-client-auth, new token set")
       end
 
       def elapsed
@@ -64,7 +64,11 @@ module EventMachine
       end
 
       def log(message)
-        "#{message} uuid=#{@notification.uuid} time=#{elapsed}"
+        EM::C2DM.logger.info("#{message} uuid=#{@notification.uuid} time=#{elapsed}")
+      end
+
+      def error(message)
+        EM::C2DM.logger.error("error: #{message} uuid=#{@notification.uuid} time=#{elapsed}")
       end
     end
   end
