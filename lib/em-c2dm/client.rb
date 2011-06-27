@@ -16,7 +16,7 @@ module EventMachine
           }
         )
         @http.callback  { on_complete }
-        @http.errback   { |x| log_error("unknown error: #{x.inspect}") }
+        @http.errback   { |error| log_error(error.inspect) }
       end
 
       private
@@ -26,9 +26,8 @@ module EventMachine
 
         code = @http.response_header.status.to_i
         if code == 200
-          EM::C2DM.logger.info("#{@notification.uuid} success (#{elapsed}ms)")
+          log("ok: #{@http.response}")
         else
-          EM::C2DM.logger.error("#{@notification.uuid} error: #{@http.response_header} #{@http.response.inspect}")
           on_failure(code)
         end
       end
@@ -36,37 +35,36 @@ module EventMachine
       def on_failure(code)
         case code
         when 401
-          log_error("invalid auth token")
+          log_error("error: invalid auth token")
         when 502, 503
-          log_error("service unavilable")
+          log_error("error: service unavilable")
           retry_after = @http.response_header["Retry-After"]
 
           unless retry_after.nil? || retry_after.empty?
-            log_error("retrying after #{retry_after} seconds...")
+            log_error("error: retrying after #{retry_after} seconds...")
             EventMachine::Timer.new(retry_after.to_i) do
               deliver(@notification)
             end
           end
         else
-          message = "unexpected response: #{@http.response.inspect}"
-          log_error(message)
+          log(message = "error: unexpected response=#{@http.response.inspect}")
           raise message
         end
       end
 
-      def log_error(message)
-        EM::C2DM.logger.error("#{@notification.uuid} failure (#{elapsed}ms): #{message}")
+      def update_token
+        new_token = @http.response_header["Update-Client-Auth"]
+        return if new_token.nil? || new_token.empty?
+        EM::C2DM.token = new_token
+        log("update-client-auth: set new token")
       end
 
       def elapsed
         ((Time.now.to_f - @start) * 1000.0).round # in milliseconds
       end
 
-      def update_token
-        new_token = @http.response_header["Update-Client-Auth"]
-        return if new_token.nil? || new_token.empty?
-        EM::C2DM.logger.info("received Update-Client-Auth. Setting new token.")
-        EM::C2DM.token = new_token
+      def log(message)
+        "#{message} guid=#{@notification.guid} time=#{elapsed}"
       end
     end
   end

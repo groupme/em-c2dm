@@ -4,7 +4,7 @@ module EventMachine
       CLIENT_LOGIN_URL = "https://www.google.com/accounts/ClientLogin"
 
       def self.authenticate(username, password)
-        puts "Authenticating with Google..."
+        print "Authenticating with Google..."
         EM.run do
           http = EventMachine::HttpRequest.new(CLIENT_LOGIN_URL).post(
             :head   => { "Content-Length" => 0 },
@@ -19,7 +19,12 @@ module EventMachine
           http.callback do
             http.response =~ /Auth=([a-z0-9\-_]+)$/i
             token = $1
-            puts "Setting token to: #{token}"
+
+            if token.nil? || token.emtpy?
+              raise "error: blank token! #{http.response}"
+            else
+              puts "ok."
+            end
             EM.stop
           end
 
