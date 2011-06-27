@@ -64,11 +64,11 @@ module EventMachine
       end
 
       def log(message)
-        EM::C2DM.logger.info("#{message} uuid=#{@notification.uuid} time=#{elapsed}")
+        EM::C2DM.logger.info("#{message} uuid=#{@notification.uuid} time=#{elapsed}ms")
       end
 
       def error(message)
-        EM::C2DM.logger.error("error: #{message} uuid=#{@notification.uuid} time=#{elapsed}")
+        EM::C2DM.logger.error("error: #{message} uuid=#{@notification.uuid} time=#{elapsed}ms")
       end
     end
   end
