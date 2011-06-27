@@ -6,12 +6,15 @@ module EventMachine
       def self.authenticate(username, password)
         puts "Authenticating with Google..."
         EM.run do
-          http = EventMachine::HttpRequest.new(CLIENT_LOGIN_URL).post :query => {
-            "Email"       => username,
-            "Passwd"      => password,
-            "accountType" => "HOSTED_OR_GOOGLE",
-            "service"     => "ac2dm"
-          }
+          http = EventMachine::HttpRequest.new(CLIENT_LOGIN_URL).post(
+            :head   => { "Content-Length" => 0 },
+            :query  => {
+              "Email"       => username,
+              "Passwd"      => password,
+              "accountType" => "HOSTED_OR_GOOGLE",
+              "service"     => "ac2dm"
+            }
+          )
 
           http.callback do
             http.response =~ /Auth=([a-z0-9\-_]+)$/i
