@@ -1,6 +1,8 @@
 module EventMachine
   module C2DM
     class Client
+      class RetryAfter < StandardError;end
+
       URL = "https://android.apis.google.com/c2dm/send"
 
       def deliver(notification)
@@ -38,13 +40,9 @@ module EventMachine
           error("invalid auth token")
         when 502, 503
           error("service unavilable")
-          retry_after = @http.response_header["Retry-After"]
-
-          unless retry_after.nil? || retry_after.empty?
-            error("retrying after #{retry_after} seconds...")
-            EventMachine::Timer.new(retry_after.to_i) do
-              deliver(@notification)
-            end
+          if retry_after = @http.response_header["Retry-After"]
+            error("retry after #{retry_after} seconds")
+            raise RetryAfter.new(retry_after.to_i)
           end
         else
           error("unexpected response code #{code} - #{@http.response.inspect}")
