@@ -4,7 +4,7 @@ module EventMachine
       CLIENT_LOGIN_URL = "https://www.google.com/accounts/ClientLogin"
 
       def self.authenticate(username, password)
-        print "Authenticating with Google..."
+        EM::C2DM.logger.info("authenticating as #{username}...")
         EM.run do
           http = EventMachine::HttpRequest.new(CLIENT_LOGIN_URL).post(
             :head   => { "Content-Length" => 0 },
@@ -25,13 +25,13 @@ module EventMachine
               raise http.response.inspect
             else
               EM::C2DM.token = token
-              puts "success"
+              EM::C2DM.logger.info("authentication success")
             end
             EM.stop
           end
 
           http.errback do |error|
-            puts "Error! #{error.inspect}"
+            EM::C2DM.logger.error("authentication error: #{error.inspect}")
             EM.stop
           end
         end

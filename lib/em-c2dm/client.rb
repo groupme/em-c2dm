@@ -1,6 +1,7 @@
 module EventMachine
   module C2DM
     class Client
+      class InvalidToken < StandardError;end
       class RetryAfter < StandardError;end
 
       URL = "https://android.apis.google.com/c2dm/send"
@@ -23,6 +24,16 @@ module EventMachine
 
       private
 
+
+      # TODO Implement error codes for 200 OK responses
+      # id=[ID of sent message]
+      # Error=[error code]
+      #   QuotaExceeded — Too many messages sent by the sender. Retry after a while.
+      #   DeviceQuotaExceeded — Too many messages sent by the sender to a specific device. Retry after a while.
+      #   InvalidRegistration — Missing or bad registration_id. Sender should stop sending messages to this device.
+      #   NotRegistered — The registration_id is no longer valid, for example user has uninstalled the application or turned off notifications. Sender should stop sending messages to this device.
+      #   MessageTooBig — The payload of the message is too big, see the limitations. Reduce the size of the message.
+      #   MissingCollapseKey — Collapse key is required. Include collapse key in the request.
       def on_complete
         update_token
 
@@ -38,6 +49,7 @@ module EventMachine
         case code
         when 401
           error("invalid auth token")
+          raise InvalidToken.new
         when 502, 503
           error("service unavilable")
           if retry_after = @http.response_header["Retry-After"]
