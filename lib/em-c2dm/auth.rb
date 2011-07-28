@@ -1,39 +1,48 @@
+require "net/https"
+require "uri"
+
 module EventMachine
   module C2DM
     class Auth
       CLIENT_LOGIN_URL = "https://www.google.com/accounts/ClientLogin"
 
+      # This call blocks the reactor intentionally. All work must cease
+      # until we've obtained a valid token.
       def self.authenticate(username, password)
         EM::C2DM.logger.info("authenticating as #{username}...")
-        EM.run do
-          http = EventMachine::HttpRequest.new(CLIENT_LOGIN_URL).post(
-            :head   => { "Content-Length" => 0 },
-            :query  => {
-              "Email"       => username,
-              "Passwd"      => password,
-              "accountType" => "HOSTED_OR_GOOGLE",
-              "service"     => "ac2dm"
-            }
-          )
 
-          http.callback do
-            http.response =~ /Auth=([a-z0-9\-_]+)$/i
-            token = $1
+        uri = URI.parse(CLIENT_LOGIN_URL)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
-            if token.nil? || token.empty?
-              puts "error!"
-              raise http.response.inspect
-            else
-              EM::C2DM.token = token
-              EM::C2DM.logger.info("authentication success")
-            end
-            EM.stop
+        request = Net::HTTP::Post.new(uri.path)
+        request["Content-Length"] = 0
+        request.set_form_data({
+          "Email"       => username,
+          "Passwd"      => password,
+          "accountType" => "HOSTED_OR_GOOGLE",
+          "service"     => "ac2dm"
+        })
+
+        response = http.request(request)
+
+        case response
+        when Net::HTTPSuccess
+          response.body =~ /Auth=([a-z0-9\-_]+)$/i
+          token = $1
+
+          if token.nil? || token.empty?
+            puts "error!"
+            raise response.body.inspect
           end
 
-          http.errback do |error|
-            EM::C2DM.logger.error("authentication error: #{error.inspect}")
-            EM.stop
-          end
+          EM::C2DM.token = token
+          EM::C2DM.logger.info("authentication success")
+          true
+        else
+          EM::C2DM.logger.error("authentication error: #{response.inspect}")
+          false
         end
       end
     end

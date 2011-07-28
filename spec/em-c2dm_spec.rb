@@ -16,8 +16,9 @@ describe EventMachine::C2DM do
       notification = EM::C2DM.deliveries.first
       notification.params.should == {
         "registration_id" => "ABC",
+        "collapse_key" => nil,
         "data.alert" => "hi"
       }
     end
-  end  
+  end
 end
