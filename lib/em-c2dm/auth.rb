@@ -15,6 +15,7 @@ module EventMachine
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+        http.ca_file = '/usr/lib/ssl/certs/ca-certificates.crt' # for heroku, may differ on your platform
 
         request = Net::HTTP::Post.new(uri.path)
         request["Content-Length"] = 0
