@@ -10,7 +10,6 @@ module EventMachine
         @start = Time.now.to_f
         @notification = notification
         raise "token not set!" unless EM::C2DM.token
-        log("send start")
         @http = EventMachine::HttpRequest.new(URL).post(
           :query  => @notification.params,
           :head   => {
