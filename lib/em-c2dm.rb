@@ -17,8 +17,7 @@ module EventMachine
 
       def push(registation_id, options)
         notification = Notification.new(registation_id, options)
-        @client ||= Client.new
-        @client.deliver(notification)
+        Client.new.deliver(notification)
       end
 
       def token=(token)
