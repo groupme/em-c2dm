@@ -10,6 +10,7 @@ module EventMachine
         @start = Time.now.to_f
         @notification = notification
         raise "token not set!" unless EM::C2DM.token
+        log("send start")
         @http = EventMachine::HttpRequest.new(URL).post(
           :query  => @notification.params,
           :head   => {
@@ -39,7 +40,7 @@ module EventMachine
 
         code = @http.response_header.status.to_i
         if code == 200
-          log("ok: #{@http.response}")
+          log("ok: #{@http.response.strip}")
         else
           on_failure(code)
         end
@@ -57,7 +58,7 @@ module EventMachine
             raise RetryAfter.new(retry_after.to_i)
           end
         else
-          error("unexpected response code #{code} - #{@http.response.inspect}")
+          error("unexpected response code #{code} - #{@http.inspect}")
         end
       end
 
