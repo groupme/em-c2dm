@@ -4,6 +4,7 @@ require "logger"
 require "uuid"
 require "em-c2dm/auth"
 require "em-c2dm/client"
+require "em-c2dm/response"
 require "em-c2dm/notification"
 
 $uuid = UUID.new
@@ -15,12 +16,13 @@ module EventMachine
         Auth.authenticate(username, password)
       end
 
-      def push(registation_id, options)
+      def push(registation_id, options, &block)
         notification = Notification.new(registation_id, options)
-        Client.new.deliver(notification)
+        Client.new(notification).deliver(block)
       end
 
       def token=(token)
+        logger.info("setting new auth token")
         @token = token
       end
 

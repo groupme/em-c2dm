@@ -30,17 +30,8 @@ module EventMachine
     end
 
     Client.class_eval do
-      def deliver(notification)
-        # noop
-      end
-
-      unless instance_methods.include?(:deliver_with_testing)
-        def deliver_with_testing(notification)
-          EM::C2DM.deliveries << notification
-          deliver_without_testing(notification)
-        end
-        alias :deliver_without_testing :deliver
-        alias :deliver :deliver_with_testing
+      def deliver(block)
+        EM::C2DM.deliveries << @notification
       end
     end
   end
