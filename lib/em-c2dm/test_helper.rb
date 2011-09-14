@@ -4,13 +4,11 @@ module EventMachine
       @deliveries ||= []
     end
 
-    Auth.class_eval do
-      def self.authenticate(username, password)
+    class << self
+      def authenticate(username, password)
         EM::C2DM.token = "TEST_TOKEN"
       end
-    end
 
-    class_eval do
       def push(registation_id, options, &block)
         notification = Notification.new(registation_id, options)
         EM::C2DM.deliveries << notification
