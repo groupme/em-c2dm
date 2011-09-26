@@ -32,6 +32,14 @@ module EventMachine
         @error.nil?
       end
 
+      def to_s
+        if success?
+          @status.to_s
+        else
+          "#{@status} (#{@error})"
+        end
+      end
+
       private
 
       def parse_body(body)

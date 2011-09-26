@@ -33,4 +33,34 @@ describe EM::C2DM::Response do
     response.client_auth.should == "new_token"
     response.error.should == "InvalidRegistration"
   end
+
+  describe "#to_s" do
+    it "handles success" do
+      response = EM::C2DM::Response.new(
+        :id           => "abc",
+        :status       => 200
+      )
+      response.to_s.should == "200"
+    end
+
+    it "handles InvalidToken" do
+      response = EM::C2DM::Response.new(
+        :id           => "abc",
+        :status       => 401,
+        :error        => "InvalidToken"
+      )
+
+      response.to_s.should == "401 (InvalidToken)"
+    end
+
+    it "handles RetryAfter error" do
+      response = EM::C2DM::Response.new(
+        :id           => "abc",
+        :status       => 502,
+        :retry_after  => 123,
+        :error        => "RetryAfter"
+      )
+      response.to_s.should == "502 (RetryAfter)"
+    end
+  end
 end
