@@ -2,6 +2,15 @@ require 'spec_helper'
 require "em-c2dm/response"
 
 describe EM::C2DM::Response do
+  describe "#duration" do
+    it "records difference between start and init" do
+      now = Time.now
+      Time.stub!(:now).and_return(now)
+      response = EM::C2DM::Response.new({}, now - 5)
+      response.duration.should == 5.0
+    end
+  end
+
   it "can be instantiated from a hash" do
     response = EM::C2DM::Response.new(
       :id           => "abc",
@@ -32,35 +41,5 @@ describe EM::C2DM::Response do
     response.retry_after.should == 10
     response.client_auth.should == "new_token"
     response.error.should == "InvalidRegistration"
-  end
-
-  describe "#to_s" do
-    it "handles success" do
-      response = EM::C2DM::Response.new(
-        :id           => "abc",
-        :status       => 200
-      )
-      response.to_s.should == "200"
-    end
-
-    it "handles InvalidToken" do
-      response = EM::C2DM::Response.new(
-        :id           => "abc",
-        :status       => 401,
-        :error        => "InvalidToken"
-      )
-
-      response.to_s.should == "401 (InvalidToken)"
-    end
-
-    it "handles RetryAfter error" do
-      response = EM::C2DM::Response.new(
-        :id           => "abc",
-        :status       => 502,
-        :retry_after  => 123,
-        :error        => "RetryAfter"
-      )
-      response.to_s.should == "502 (RetryAfter)"
-    end
   end
 end

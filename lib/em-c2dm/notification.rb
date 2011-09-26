@@ -1,7 +1,7 @@
 module EventMachine
   module C2DM
     class Notification
-      attr_reader :uuid, :options
+      attr_reader :uuid, :options, :registration_id
 
       def initialize(registration_id, options = {})
         @registration_id, @options = registration_id, options
@@ -11,6 +11,14 @@ module EventMachine
 
       def params
         @params ||= generate_params
+      end
+
+      def headers
+        {
+          "Authorization"   => "GoogleLogin auth=#{EM::C2DM.token}",
+          "Content-Length"  => 0,
+          "User-Agent"      => "em-c2dm #{EM::C2DM::VERSION}"
+        }
       end
 
       private

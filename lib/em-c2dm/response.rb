@@ -12,10 +12,19 @@ module EventMachine
     #   MessageTooBig         - The payload of the message is too big, see the limitations. Reduce the size of the message.
     #   MissingCollapseKey    - Collapse key is required. Include collapse key in the request.
     class Response
-      attr_accessor :id, :status, :retry_after, :client_auth, :error
+      # Common
+      attr_accessor :id
+      attr_accessor :status
+      attr_accessor :duration
+      attr_accessor :error
 
-      def initialize(http = {})
+      # Service-specific
+      attr_accessor :retry_after
+      attr_accessor :client_auth
+
+      def initialize(http = {}, start = nil)
         @http = http
+        @duration = Time.now.to_f - start.to_f if start
         if http.kind_of?(Hash)
           @id           = http[:id]
           @status       = http[:status]

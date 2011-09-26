@@ -4,7 +4,6 @@ require "logger"
 require "uuid"
 require "em-c2dm/auth"
 require "em-c2dm/client"
-require "em-c2dm/response"
 require "em-c2dm/notification"
 
 $uuid = UUID.new
