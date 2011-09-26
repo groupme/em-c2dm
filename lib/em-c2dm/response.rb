@@ -15,6 +15,7 @@ module EventMachine
       attr_accessor :id, :status, :retry_after, :client_auth, :error
 
       def initialize(http = {})
+        @http = http
         if http.kind_of?(Hash)
           @id           = http[:id]
           @status       = http[:status]
@@ -48,10 +49,14 @@ module EventMachine
         @client_auth = headers["UPDATE_CLIENT_AUTH"]
 
         case @status
+        when 200
+          # noop
         when 401
           @error = "InvalidToken"
         when 502, 503
           @error = "RetryAfter"
+        else
+          @error = "Unknown error: #{headers.status} (#{@http.response})"
         end
       end
     end
