@@ -27,7 +27,7 @@ module EventMachine
         end
 
         http.errback do |e|
-          error(e.inspect)
+          EM::WPN.logger.error(e.inspect)
         end
       end
 
