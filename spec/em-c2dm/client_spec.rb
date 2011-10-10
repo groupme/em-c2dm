@@ -145,4 +145,42 @@ describe EM::C2DM::Client do
       @response.retry_after.should == 1234
     end
   end
+
+  describe "a network error" do
+    before do
+      stub_request(:post, EM::C2DM::Client::URL).with(
+        :query => {
+          "collapse_key"    => nil,
+          "data.alert"      => "Error",
+          "registration_id" => "ABC"
+        },
+        :headers => {
+          'Authorization'=>'GoogleLogin auth=token',
+          'Content-Length'=>'0',
+          'User-Agent'=>'em-c2dm 0.0.1'
+        }
+      ).to_timeout
+
+      @log = StringIO.new
+      EM::C2DM.logger = Logger.new(@log)
+    end
+
+    it "logs the error" do
+      EM.run_block { EM::C2DM.push("ABC", :alert => "Error") }
+      @log.rewind
+      @log.read.should include("ERROR")
+    end
+
+    it "does not run the passed block" do
+      block_called = false
+
+      EM.run_block do
+        EM::C2DM.push("ABC", :alert => "Error") do
+          block_called = true
+        end
+      end
+
+      block_called.should be_false
+    end
+  end
 end
