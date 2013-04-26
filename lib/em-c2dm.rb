@@ -5,6 +5,7 @@ require "uuid"
 require "em-c2dm/auth"
 require "em-c2dm/client"
 require "em-c2dm/notification"
+require "em-c2dm/version"
 
 $uuid = UUID.new
 
